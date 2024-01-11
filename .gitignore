@@ -1,0 +1,11 @@
+bin/
+obj/
+debug/
+.vs/
+*.suo
+*.csproj.user
+packages/*/
+/*.sln.DotSettings.user
+*.exe
+*.msi
+*.ide
