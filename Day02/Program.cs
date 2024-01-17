@@ -1,6 +1,7 @@
 ﻿using System.Text.RegularExpressions;
 
 Part1();
+Part2();
 
 void Part1()
 {
@@ -10,6 +11,16 @@ void Part1()
         .Select(Game.Parse)
         .Where(g => g.SubSets.All(s => maximumCubes.Contains(s)))
         .Select(g => g.Id)
+        .Sum();
+
+    Console.WriteLine(result);
+}
+
+void Part2()
+{
+    var result = File.ReadLines("PuzzleInput.txt")
+        .Select(Game.Parse)
+        .Select(g => g.SubSets.Aggregate(CubeSubSet.Empty,CubeSubSet.Max).Power)
         .Sum();
 
     Console.WriteLine(result);
@@ -36,6 +47,17 @@ record CubeSubSet(int Red, int Green, int Blue)
         Red >= other.Red && 
         Green >= other.Green && 
         Blue >= other.Blue;
+
+    public int Power => Red * Green * Blue;
+
+    public static CubeSubSet Max(CubeSubSet a, CubeSubSet b) =>
+        new (
+            Math.Max(a.Red, b.Red),
+            Math.Max(a.Green, b.Green),
+            Math.Max(a.Blue, b.Blue));
+
+    public static readonly CubeSubSet Empty = new(0, 0, 0);
+       
 
     public static CubeSubSet Parse(string subSetAsString)
     {
