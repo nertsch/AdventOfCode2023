@@ -7,7 +7,7 @@ static void Part1()
         from line in File.ReadLines("PuzzleInput.txt")
         let firstDigit = line.First(char.IsDigit)
         let lastDigit = line.Last(char.IsDigit)
-        select int.Parse(stackalloc[] { firstDigit, lastDigit })
+        select int.Parse([firstDigit, lastDigit])
     ).Sum();
 
     Console.WriteLine(calibrationValueSum);
@@ -21,36 +21,46 @@ static void Part2()
 
     var calibrationValueSum = (
         from line in File.ReadLines("PuzzleInput.txt")
-        let fixedLine = FixLine(line.AsSpan())
-        let firstDigit = fixedLine.First(char.IsDigit)
-        let lastDigit = fixedLine.Last(char.IsDigit)
-        select int.Parse(stackalloc[] { firstDigit, lastDigit })
+        let firstDigit = GetFirstDigit(line)
+        let lastDigit = GetLastDigit(line)
+        select int.Parse([firstDigit, lastDigit])
     ).Sum();
 
     Console.WriteLine(calibrationValueSum);
 
-    string FixLine(ReadOnlySpan<char> line)
+    char GetFirstDigit(ReadOnlySpan<char> line)
     {
-        Span<char> fixedLine = stackalloc char[line.Length];
-        var fixedLineLength = 0;
-
         for (var i = 0; i < line.Length; i++)
         {
-            var c = line[i];
-            if (char.IsDigit(c))
-            {
-                fixedLine[fixedLineLength++] = c;
-            }
-            else
-            {
-                foreach (var replacement in replacements)
-                {
-                    if (line[i..].StartsWith(replacement.OldValue))
-                        fixedLine[fixedLineLength++] = replacement.NewValue;
-                }
-            }
+            if (GetDigit(line[i..]) is { } digit)
+                return digit;
         }
 
-        return new string(fixedLine[..fixedLineLength]);
+        throw new ArgumentException("Line must contain at least one digit");
+    }
+
+    char GetLastDigit(ReadOnlySpan<char> line)
+    {
+        for (var i = line.Length - 1; i >= 0; i--)
+        {
+            if (GetDigit(line[i..]) is { } digit)
+                return digit;
+        }
+        
+        throw new ArgumentException("Line must contain at least one digit");
+    }
+   
+    char? GetDigit(ReadOnlySpan<char> input)
+    {
+        if (char.IsDigit(input[0]))
+            return input[0];
+
+        foreach (var replacement in replacements)
+        {
+            if (input.StartsWith(replacement.OldValue))
+                return replacement.NewValue;
+        }
+
+        return null;
     }
 }
