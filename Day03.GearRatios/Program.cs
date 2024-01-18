@@ -4,7 +4,7 @@ Console.ReadKey();
 void Part1()
 {
     string previousLine = null!;
-    string lineToEvaluate = null!;
+    string? lineToEvaluate = null;
     string nextLine = null!;
 
     var partNumberSum = 0;
@@ -23,7 +23,7 @@ void Part1()
         }
         else
         {
-            previousLine = lineToEvaluate = new string('.', readLine.Length);
+            previousLine = lineToEvaluate = new string('.', readLine!.Length);
             nextLine = readLine;
             currentNumber = new char[readLine.Length];
         }
